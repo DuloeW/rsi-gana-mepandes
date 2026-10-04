@@ -30,18 +30,6 @@
    Edit values here to personalize the invitation
    ============================================================ */
 const invitationData = {
-    groom: {
-        name: 'Bayu Gelgel',
-        father: 'I Made Sudana',
-        mother: 'Ni Made Ratih',
-        instagram: '#'
-    },
-    bride: {
-        name: 'Ayu Savitri',
-        father: 'I Wayan Ardika',
-        mother: 'Ni Wayan Sari',
-        instagram: '#'
-    },
     wedding: {
         // Date for countdown — WITA = UTC+8
         date: '2026-10-11',
@@ -50,18 +38,18 @@ const invitationData = {
         timezone: 'Asia/Makassar'
     },
     ceremony: {
-        title: 'Akad Nikah',
-        time: '09.00 – 11.00 WITA',
-        venue: 'Pura Agung Besakih',
-        address: 'Karangasem, Bali',
-        mapsUrl: 'https://maps.google.com/?q=Pura+Besakih+Bali'
+        title: 'Rsi Gana & Mepandes',
+        time: '12.00 – 20.00 WITA',
+        venue: 'Dusun Cempaka, Desa Pikat, Kec. DAWAN, Kabupaten Klungkung',
+        address: 'Dusun Cempaka, Desa Pikat, Kec. DAWAN, Kabupaten Klungkung',
+        mapsUrl: 'https://maps.google.com/?q=Dusun Cempaka, Desa Pikat, Kec. DAWAN, Kabupaten Klungkung'
     },
     reception: {
         title: 'Resepsi',
-        time: '12.00 – 17.00 WITA',
-        venue: 'The Layar Seminyak',
-        address: 'Seminyak, Bali',
-        mapsUrl: 'https://maps.google.com/?q=The+Layar+Seminyak+Bali'
+        time: '18.00 WITA - Selesai',
+        venue: 'Dusun Cempaka, Desa Pikat, Kec. DAWAN, Kabupaten Klungkung',
+        address: 'Dusun Cempaka, Desa Pikat, Kec. DAWAN, Kabupaten Klungkung',
+        mapsUrl: 'https://maps.google.com/?q=Dusun Cempaka, Desa Pikat, Kec. DAWAN, Kabupaten Klungkung'
     },
     bankAccounts: [
         { bank: 'BCA', accountNumber: '1234567890', accountName: 'Bayu Gelgel', elementId: 'copy-bca' },
@@ -229,7 +217,7 @@ function initCountdown() {
             }
         }
 
-        setWithFlip(daysEl, days, 3);
+        setWithFlip(daysEl, days, 2);
         setWithFlip(hoursEl, hours);
         setWithFlip(minutesEl, minutes);
         setWithFlip(secondsEl, seconds);
@@ -264,7 +252,7 @@ function initMusicPlayer() {
                 setPlayState(true);
             }).catch(err => {
                 console.warn('Music autoplay blocked:', err);
-            showToast('Tidak dapat memutar musik. Coba klik lagi.', 'info');
+                showToast('Tidak dapat memutar musik. Coba klik lagi.', 'info');
             });
         }
     });
@@ -292,7 +280,7 @@ function initMusicPlayer() {
     });
 
     // Global reference for autoplay after opening
-    window._musicPlayer = { play: () => backgroundMusic.play().then(() => setPlayState(true)).catch(() => {}) };
+    window._musicPlayer = { play: () => backgroundMusic.play().then(() => setPlayState(true)).catch(() => { }) };
 }
 
 function initMusicAutoplay() {
@@ -800,12 +788,19 @@ function initCalendar() {
     calBtn.addEventListener('click', (e) => {
         e.preventDefault();
 
-        // Show a sub-menu or just open Google Calendar
-        const startDate = '20261011T010000Z'; // 09:00 WITA = 01:00 UTC
-        const endDate = '20261011T090000Z';   // 17:00 WITA = 09:00 UTC
+        const startDate = '20261011T040000Z'; // 12:00 WITA = 04:00 UTC
+        const endDate = '20261011T120000Z';   // 20:00 WITA = 12:00 UTC
+
         const title = encodeURIComponent(`Upacara Rsi Gana & Mepandes`);
-        const details = encodeURIComponent(`Rsi Gana: 09.00 WITA - ${invitationData.ceremony.venue}\nMepandes: 12.00 WITA - ${invitationData.reception.venue}`);
-        const location = encodeURIComponent(`${invitationData.ceremony.venue}, ${invitationData.ceremony.address}`);
+        const details = encodeURIComponent(
+            `Rsi Gana & Mepandes\n` +
+            `11 Oktober 2026\n` +
+            `12.00 WITA - 20.00 WITA\n\n` +
+            `${invitationData.ceremony.venue}`
+        );
+        const location = encodeURIComponent(
+            `${invitationData.ceremony.venue}, ${invitationData.ceremony.address}`
+        );
 
         const googleCalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDate}/${endDate}&details=${details}&location=${location}`;
 
@@ -861,7 +856,7 @@ function initRippleEffect() {
     const buttons = document.querySelectorAll('.btn-submit, .btn-maps, .btn-open-invitation, .btn-copy');
 
     buttons.forEach(btn => {
-        btn.addEventListener('click', function(e) {
+        btn.addEventListener('click', function (e) {
             const rect = btn.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
@@ -961,7 +956,7 @@ function initLazyLoad() {
    ============================================================ */
 function initUrlParams() {
     const urlParams = new URLSearchParams(window.location.search);
-    
+
     // 1. Parse Guest Name (?to=Nama)
     const guestParam = urlParams.get('to');
     if (guestParam) {
@@ -973,27 +968,27 @@ function initUrlParams() {
             guestGreetingEl.style.display = 'block';
         }
     }
-    
+
     // 2. Parse Time (?time=13:00 or 1pm)
     const timeParam = urlParams.get('time');
     if (timeParam) {
         const timeLower = timeParam.toLowerCase().replace(/\s/g, '');
         let hours = 9;
         let mins = 0;
-        
+
         const timeMatch = timeLower.match(/^(\d{1,2})(?::(\d{2}))?(am|pm)?/);
         if (timeMatch) {
             hours = parseInt(timeMatch[1], 10);
             mins = timeMatch[2] ? parseInt(timeMatch[2], 10) : 0;
             const isPM = timeMatch[3] === 'pm';
             const isAM = timeMatch[3] === 'am';
-            
+
             if (isPM && hours < 12) hours += 12;
             if (isAM && hours === 12) hours = 0;
-            
+
             const eventTime = `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}:00`;
             invitationData.wedding.time = eventTime;
-            
+
             const heroTimeEl = document.getElementById('hero-time');
             if (heroTimeEl) {
                 heroTimeEl.textContent = `${String(hours).padStart(2, '0')}.${String(mins).padStart(2, '0')} WITA`;
